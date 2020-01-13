@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "264484568240",
+    "firebase_url": "https://androidmessenger-e8407.firebaseio.com",
+    "project_id": "androidmessenger-e8407",
+    "storage_bucket": "androidmessenger-e8407.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264484568240:android:21ba90c8a8e7db6ab68f75",
+        "android_client_info": {
+          "package_name": "com.andersclark.kotlinmessenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264484568240-nk37p3437986k31k52huija3u6r90osq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.andersclark.kotlinmessenger",
+            "certificate_hash": "fc24fff28212713eaeb4631b65fcfcd1bb0813c0"
+          }
+        },
+        {
+          "client_id": "264484568240-0skh0sseihr7p18nbl7sr4k57rv2rkmj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0jN4_1_if-qIHikNOSMF7I7YYHEq2gwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264484568240-0skh0sseihr7p18nbl7sr4k57rv2rkmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

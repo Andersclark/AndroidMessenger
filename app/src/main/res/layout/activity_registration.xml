@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".MainActivity">
+    tools:context=".RegisterActivity">
 
 
     <EditText
@@ -13,17 +13,17 @@
         android:layout_width="0dp"
         android:layout_height="50sp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:paddingLeft="20sp"
-        android:paddingRight="20sp"
         android:background="@drawable/rounded_edittext_register_login"
         android:ems="10"
         android:hint="username"
         android:inputType="textPersonName"
+        android:paddingLeft="20sp"
+        android:paddingRight="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/registration_addphoto" />
 
     <EditText
         android:id="@+id/registration_email"
@@ -83,11 +83,12 @@
         android:id="@+id/registration_addphoto"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginTop="128dp"
         android:background="@drawable/circular_button"
         android:text="Upload photo"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/registration_username"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="161dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
