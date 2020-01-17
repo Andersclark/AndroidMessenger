@@ -10,9 +10,12 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.util.*
+
+private const val TAG = "RegisterActivity"
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -28,7 +31,6 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(intent)
         }
         registration_addphoto.setOnClickListener {
-            Log.d("RegisterActivity", "Try to show photo selector")
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent, 0)
@@ -41,17 +43,17 @@ class RegisterActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
-            Log.d("RegisterActivity", "Photo was selected")
-
             selectedPhotoUri = data.data
+            Log.d(TAG, "Photo was selected at ${selectedPhotoUri.toString()}")
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
-            val bitmapDrawable = BitmapDrawable(bitmap)
-            registration_addphoto.setBackgroundDrawable(bitmapDrawable)
+            registration_addphoto_circleimageview.setImageBitmap(bitmap)
+            registration_addphoto.alpha = 0f
+           // val bitmapDrawable = BitmapDrawable(bitmap)
+            //registration_addphoto.setBackgroundDrawable(bitmapDrawable)
         }
     }
 
     private fun performRegister() {
-
         val email = registration_email.text.toString()
         val password = registration_password.text.toString()
 
@@ -60,41 +62,59 @@ class RegisterActivity : AppCompatActivity() {
                 .show()
             return
         }
-        Log.d("RegisterActivity", "Email is: ${email}")
-        Log.d("RegisterActivity", "Password is: ${password}")
+        Log.d(TAG, "Email is: ${email}")
+        Log.d(TAG, "Password is: ${password}")
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (!it.isSuccessful) return@addOnCompleteListener
                 // else if successful
                 Log.d(
-                    "RegisterActivity",
+                    TAG,
                     "SUCCESSFULLY CREATED USER with UID: ${it.result!!.user?.uid}"
                 )
                 uploadImageToFirebaseStorage()
             }
             .addOnFailureListener {
-                Log.d("RegisterActivity", "Failed to create user: ${it.message}")
+                Log.d(TAG, "Failed to create user: ${it.message}")
                 Toast.makeText(this, "Failed to create user: ${it.message}", Toast.LENGTH_SHORT)
                     .show()
             }
     }
 
     private fun uploadImageToFirebaseStorage() {
-    Log.d("RegisterActivity", "trying to upload image to Firebase...")
+    Log.d(TAG, "trying to upload image to Firebase...")
         if (selectedPhotoUri == null) {
-            Log.d("RegisterActivity", "Photo URI is null")
+            Log.d(TAG, "Photo URI is null")
             return
         }
         val filename = UUID.randomUUID().toString()
+
+        // TODO: rename to something useful:
         val ref = FirebaseStorage.getInstance().reference.child("/images/$filename")
 
         ref.putFile(selectedPhotoUri!!)
             .addOnSuccessListener {
-                Log.d("RegisterActivity", "Successfully uploaded image: ${it.metadata?.path}")
-
-
+                Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
+                ref.downloadUrl.addOnSuccessListener {
+                    Log.d(TAG, "File Location $it")
+                }
+           saveUserToFireBaseDatabase(it.toString())
+           }
+           .addOnFailureListener{
+               Log.d(TAG, "Uploading imaged failed: ${it.message}")
+           }
+    }
+    private fun saveUserToFireBaseDatabase(profileImageUrl: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        val user = User(uid, registration_username.text.toString(), profileImageUrl )
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Log.d(TAG, "Finally, we saved the user to Firebase Database")
             }
     }
 }
+
+class User(val uid: String, val username: String, val profileImageUrl: String)
 
 
