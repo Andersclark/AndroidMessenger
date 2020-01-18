@@ -2,13 +2,13 @@ package com.andersclark.kotlinmessenger
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.andersclark.kotlinmessenger.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -19,9 +19,11 @@ private const val TAG = "RegisterActivity"
 
 class RegisterActivity : AppCompatActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
+        supportActionBar?.title = "Sign up"
 
         registration_registerbutton.setOnClickListener {
             performRegister()
@@ -53,6 +55,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
+
     private fun performRegister() {
         val email = registration_email.text.toString()
         val password = registration_password.text.toString()
@@ -81,12 +84,13 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
+
     private fun uploadImageToFirebaseStorage() {
-    Log.d(TAG, "trying to upload image to Firebase...")
-        if (selectedPhotoUri == null) {
-            Log.d(TAG, "Photo URI is null")
-            return
-        }
+        Log.d(TAG, "trying to upload image to Firebase...")
+            if (selectedPhotoUri == null) {
+                Log.d(TAG, "Photo URI is null")
+                return
+            }
         val filename = UUID.randomUUID().toString()
 
         // TODO: rename to something useful:
@@ -104,17 +108,28 @@ class RegisterActivity : AppCompatActivity() {
                Log.d(TAG, "Uploading imaged failed: ${it.message}")
            }
     }
+
+
     private fun saveUserToFireBaseDatabase(profileImageUrl: String) {
+        Toast.makeText(this, "Registering user...", Toast.LENGTH_SHORT)
+            .show()
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-        val user = User(uid, registration_username.text.toString(), profileImageUrl )
+        val user = User(
+            uid,
+            registration_username.text.toString(),
+            profileImageUrl
+        )
         ref.setValue(user)
             .addOnSuccessListener {
-                Log.d(TAG, "Finally, we saved the user to Firebase Database")
+                Log.d(TAG, "User ${user.username} saved to Firebase")
+                Toast.makeText(this, "Logged in as ${registration_username.text}", Toast.LENGTH_SHORT)
+
+                val intent = Intent(this, LatestMessageActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
     }
 }
-
-class User(val uid: String, val username: String, val profileImageUrl: String)
 
 
